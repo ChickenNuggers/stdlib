@@ -1,0 +1,66 @@
+using *;
+
+local {Error, assert} = require("stdlib.error");
+local {IScope} = require("stdlib.scope");
+
+class IOError implements Error {
+	__init(errstr, errno)=> {
+		assert.is(errstr, "string");
+		assert.is(errno, "number");
+	}
+}
+
+class File implements IScope {
+	try_io(value, ...)-> return assert(value, IOError, ...);
+	__init(name, mode="r")=> {
+		assert.is(name, "string");
+		assert.is(mode, "string");
+		@file = @try_io(io.open(name, mode));
+	}
+	descope()=>
+		if (! @closed)
+			@closed = true;
+		else
+			(@file:flush()):close();
+	with(fn)=> {
+		local res = {pcall(fn, @)};
+		self:descope();
+		return unpack(res);
+	}
+	close()=> @descope();
+	flush()=>
+		@file:flush();
+	async lines(fmt = "l")=> {
+		assert.is(fmt, "string", "number");
+		local line = @file:read(fmt);
+		while line {
+			yield line;
+			line = @file:read(fmt);
+		}
+	}
+	read(fmt = "l")=> {
+		assert.is(fmt, "string", "number");
+		return @try_io(@file:read(fmt));
+	}
+	seek(whence="cur", offset=0)=> {
+		assert.is(whence, "string");
+		assert.is(offset, "number");
+		return @try_io(@file:seek(whence, offset));
+	}
+	setvbuf(mode, size=(^2 10))=> {
+		assert.is(mode, "string");
+		assert.is(size, "number");
+		return @try_io(@file:setvbuf(mode, size));
+	}
+	write(...)=> {
+		for (_, v in ipairs({...}))
+			assert.is(v, "number", "string");
+		for (_, value in fnl.map(tostring, {...}))
+			@try_io(@file:write(value));
+	}
+}
+
+return {
+	IOError = IOError,
+	File = File
+};
