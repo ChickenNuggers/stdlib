@@ -1,0 +1,53 @@
+using *;
+
+interface BaseError {
+	__tostring;
+}
+
+class Error extends BaseError {
+
+}
+
+prepare(value)-> {
+	return (?: (== type(value) 'string') ("%q"):format(value) tostring(value));
+}
+
+class TypeError extends BaseError {
+	__init(value, ...)=>
+		@value, @type, @expected = value, type(value), {...};
+
+	__tostring()=>
+		return ("%s: {value=%s, type=%q, expected=%s}"):format(
+			tostring(@__class), @value, @type, ("[%s]"):format(table.concat(
+			table.from_generator(fnl.map(prepare, @expected)), ", ")));
+}
+
+local assert = setmetatable({
+	is = (value, ...)-> {
+		local _type = type(value);
+		local types = {...};
+		local has_type = false;
+		for (_, possible_type in pairs(types))
+			if (== possible_type _type)
+				has_type = true;
+		if has_type
+			return;
+		error(TypeError(value, ...));
+	}
+}, {
+	__call = (truthy, val, ...)=>
+		if (! truthy)
+			if (|| (== type(val) "function") (&& getmetatable(val)
+					(getmetatable(val)).__call))
+				error(((val)(...)));
+			else
+				error(val, ...);
+		else
+			return truthy, val, ...;
+});
+
+return {
+	assert = assert,
+	Error = Error,
+	BaseError = BaseError
+};
