@@ -1,0 +1,8 @@
+interface IScope {
+	descope;
+	with;
+}
+
+return {
+	IScope = IScope
+};
