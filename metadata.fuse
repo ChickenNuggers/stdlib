@@ -1,0 +1,7 @@
+return {
+	version = "0.1.0",
+	description = "Fused Standard Library",
+	author = "FusionScript Team",
+	copyright = "(c) 2016",
+	license = "MIT"
+};
