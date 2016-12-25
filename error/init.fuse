@@ -1,10 +1,10 @@
 using *;
 
-interface BaseError {
+local interface BaseError {
 	__tostring;
 }
 
-class Error extends BaseError {
+local class Error extends BaseError {
 
 }
 
@@ -12,7 +12,7 @@ prepare(value)-> {
 	return (?: (== type(value) 'string') ("%q"):format(value) tostring(value));
 }
 
-class TypeError extends BaseError {
+local class TypeError extends BaseError {
 	__init(value, ...)=>
 		@value, @type, @expected = value, type(value), {...};
 

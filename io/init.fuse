@@ -3,14 +3,14 @@ using *;
 local {Error, assert} = require("stdlib.error");
 local {IScope} = require("stdlib.scope");
 
-class IOError implements Error {
+local class IOError implements Error {
 	__init(errstr, errno)=> {
 		assert.is(errstr, "string");
 		assert.is(errno, "number");
 	}
 }
 
-class File implements IScope {
+local class File implements IScope {
 	try_io(value, ...)-> return assert(value, IOError, ...);
 	__init(name, mode="r")=> {
 		assert.is(name, "string");

@@ -1,4 +1,4 @@
-interface IScope {
+local interface IScope {
 	descope;
 	with;
 }
