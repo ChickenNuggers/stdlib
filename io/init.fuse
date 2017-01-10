@@ -7,6 +7,7 @@ local class IOError implements Error {
 	__init(errstr, errno)=> {
 		assert.is(errstr, "string");
 		assert.is(errno, "number");
+		@errstr, @errno = errstr, errno;
 	}
 }
 
