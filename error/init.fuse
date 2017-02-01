@@ -4,8 +4,9 @@ local interface BaseError {
 	__tostring;
 }
 
-local class Error extends BaseError {
-
+local class Error implements BaseError {
+	__init(...)=> @values = table.from_generator(fnl.map(tostring, {...}));
+	__tostring()=> return table.concat(@values, ",");
 }
 
 prepare(value)-> {
@@ -23,7 +24,7 @@ local class TypeError extends BaseError {
 }
 
 local assert = setmetatable({
-	is = (value, ...)-> {
+	is = \value, ... -> {
 		local _type = type(value);
 		local types = {...};
 		local has_type = false;
@@ -35,7 +36,7 @@ local assert = setmetatable({
 		error(TypeError(value, ...));
 	}
 }, {
-	__call = (truthy, val, ...)=>
+	__call = \truthy, val, ... =>
 		if (! truthy)
 			if (|| (== type(val) "function") (&& getmetatable(val)
 					(getmetatable(val)).__call))
@@ -49,5 +50,6 @@ local assert = setmetatable({
 return {
 	assert = assert,
 	Error = Error,
-	BaseError = BaseError
+	BaseError = BaseError,
+	TypeError = TypeError
 };
