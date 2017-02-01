@@ -21,8 +21,10 @@ local class File implements IScope {
 	descope()=>
 		if (! @closed)
 			@closed = true;
-		else
-			(@file:flush()):close();
+		else {
+			@file:flush();
+			@file:close();
+		}
 	with(fn)=> {
 		local res = {pcall(fn, @)};
 		self:descope();
