@@ -12,7 +12,7 @@ local class IOError implements Error {
 }
 
 local class File implements IScope {
-	try_io(value, ...)-> return assert(value, IOError, ...);
+	try_io(value, ...)=> return assert(value, IOError, ...);
 	__init(name, mode="r")=> {
 		assert.is(name, "string");
 		assert.is(mode, "string");
@@ -35,10 +35,10 @@ local class File implements IScope {
 		@file:flush();
 	async lines(fmt = "l")=> {
 		assert.is(fmt, "string", "number");
-		local line = @file:read(fmt);
+		local line = @try_io(@file:read(fmt));
 		while line {
 			yield line;
-			line = @file:read(fmt);
+			line = @try_io(@file:read(fmt));
 		}
 	}
 	read(fmt = "l")=> {
