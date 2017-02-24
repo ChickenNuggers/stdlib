@@ -54,7 +54,7 @@ local assert = setmetatable({
 
 local class Try {
 	__init(fn)=> {
-		local result = pcall(fn);
+		local result = {pcall(fn)};
 		if (! table.remove(result, 1)) {
 			@error = result;
 			@has_error = true;
