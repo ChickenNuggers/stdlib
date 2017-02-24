@@ -9,8 +9,15 @@ local class Error implements BaseError {
 	__tostring()=> return table.concat(@values, ",");
 }
 
-prepare(value)-> {
+local prepare(value)-> {
 	return (?: (== type(value) 'string') ("%q"):format(value) tostring(value));
+}
+
+-- TODO: interfaces, also add __interface in class()
+local is(obj, _class)-> {
+	if (&& obj.__class (!= obj.__class _class))
+		if (getmetatable(_class)).__index
+			return is(obj, (getmetatable(_class)).__index);
 }
 
 local class TypeError extends BaseError {
@@ -29,10 +36,8 @@ local assert = setmetatable({
 		local types = {...};
 		local has_type = false;
 		for (_, possible_type in pairs(types))
-			if (== possible_type _type)
-				has_type = true;
-		if has_type
-			return;
+			if (|| (== possible_type _type) is(value, possible_type))
+				return;
 		error(TypeError(value, ...));
 	}
 }, {
@@ -47,9 +52,28 @@ local assert = setmetatable({
 			return truthy, val, ...;
 });
 
+local class Try {
+	__init(fn)=> {
+		local result = pcall(fn);
+		if (! table.remove(result, 1)) {
+			@error = result;
+			@has_error = true;
+		}
+	}
+	catch(error_class, handler)=> {
+		if @fired
+			return;
+		if (&& @has_error is(@error[1], error_class)) {
+			handler(@error);
+			@fired = true;
+		}
+	}
+}
+
 return {
 	assert = assert,
 	Error = Error,
 	BaseError = BaseError,
-	TypeError = TypeError
+	TypeError = TypeError,
+	Try = Try
 };
