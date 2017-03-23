@@ -58,6 +58,9 @@ local class Try {
 		if (! table.remove(result, 1)) {
 			@error = result;
 			@has_error = true;
+		} else {
+			@has_error = false;
+			return unpack(result);
 		}
 	}
 	catch(error_class, handler)=> {
