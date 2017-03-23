@@ -1,0 +1,34 @@
+using {re};
+
+local pattern = re.compile([[ -- LPEG-RE
+	document <- {| start (whsp element)* |}
+
+	element <- {|
+		'<' {:tag: [^/ >]+ :}
+			{:options: (& [^>]) {| 
+				{| S+ {:key: [^ =>]+ :}
+					{:value: eq value / '' -> true :} |}*
+			|} :}?
+		'>'
+		{:content: {| (whsp element)* whsp |} :}
+		'</' =tag '>'
+	|} / comment / {[^<]+} -> strip
+
+	comment <- '<!--' comment_body comment_close
+	comment_close <- '-->'
+	comment_body <- ((! comment_close) .)*
+
+	start <- '<?xml' S+ version S+ encoding whsp '?>' whsp
+	version <- {:version: 'version' eq value :}
+	encoding <- {:encoding: 'encoding' eq value :}
+
+	value <- "'" {("\" . / [^'])*} "'" / '"' {("\" . / [^"])*} '"'
+	eq <- S* '=' S*
+	S <- ' '
+	whsp <- %s*
+]], {["true"] = (\-> true),
+	["strip"] = (\x-> return x:match("^%s*(.-)%s*$");)});
+
+return {
+	pattern = pattern
+};
