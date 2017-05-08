@@ -26,8 +26,12 @@ local pattern = re.compile([[ -- LPEG-RE
 	eq <- S* '=' S*
 	S <- ' '
 	whsp <- %s*
-]], {["true"] = (\-> true),
-	["strip"] = (\x-> return x:match("^%s*(.-)%s*$");)});
+]], {
+	["true"] = (\-> true),
+	["strip"] = (\x-> {
+		return x:match("^%s*(.-)%s*$");
+	})
+});
 
 return {
 	pattern = pattern
