@@ -41,7 +41,7 @@ local assert = setmetatable({
 		error(TypeError(value, ...));
 	}
 }, {
-	__call = \truthy, val, ... =>
+	__call = \truthy, val, ... => {
 		if (! truthy)
 			if (|| (== type(val) "function") (&& getmetatable(val)
 					(getmetatable(val)).__call))
@@ -50,7 +50,7 @@ local assert = setmetatable({
 				error(val, ...);
 		else
 			return truthy, val, ...;
-});
+}});
 
 local class Try {
 	__init(fn)=> {
