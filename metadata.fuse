@@ -1,5 +1,5 @@
 return {
-	version = "0.1.0",
+	version = "0.1.1",
 	description = "Fused Standard Library",
 	author = "FusionScript Team",
 	copyright = "(c) 2016",
