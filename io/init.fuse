@@ -28,7 +28,7 @@ local class File implements IScope {
 	with(fn)=> {
 		local res = {pcall(fn, @)};
 		self:descope();
-		return table.unpack(res);
+		return assert(table.unpack(res));
 	}
 	close()=> @descope();
 	flush()=>
