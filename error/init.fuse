@@ -80,5 +80,6 @@ return {
 	Error = Error,
 	BaseError = BaseError,
 	TypeError = TypeError,
-	Try = Try
+	Try = Try,
+	is_class = is
 };
