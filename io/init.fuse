@@ -1,9 +1,17 @@
 using *;
 
-local {Error, assert} = require("stdlib.error");
+local {BaseError, assert} = require("stdlib.error");
 local {IScope} = require("stdlib.scope");
 
-local class IOError implements Error {
+local class IOError implements BaseError {
+	__init(errstr, errno)=> {
+		assert.is(errstr, "string");
+		assert.is(errno, "number");
+		@errstr, @errno = errstr, errno;
+	}
+}
+
+local class FileNotFoundError extends IOError implements BaseError {
 	__init(errstr, errno)=> {
 		assert.is(errstr, "string");
 		assert.is(errno, "number");
@@ -12,7 +20,11 @@ local class IOError implements Error {
 }
 
 local class File implements IScope {
-	try_io(value, ...)=> return assert(value, IOError, ...);
+	try_io(value, errstr, errnum)=> {
+		if (== errnum 2)
+			return assert(value, FileNotFoundError, errstr, errnum);
+		else return assert(value, IOError, errstr, errnum);
+	}
 	__init(name, mode="r")=> {
 		assert.is(name, "string");
 		assert.is(mode, "string");
