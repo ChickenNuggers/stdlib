@@ -60,7 +60,7 @@ local class Try {
 			@has_error = true;
 		} else {
 			@has_error = false;
-			return unpack(result);
+			return table.unpack(result);
 		}
 	}
 	catch(error_class, handler)=> {
